@@ -30,7 +30,10 @@ public class Address {
     private String typeAddress;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+
+    @JoinColumn(name = "id_user", nullable = false)
+
+ 
     private User user;
 
     // Constructor vacío

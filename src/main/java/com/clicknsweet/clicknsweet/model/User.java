@@ -18,7 +18,7 @@ public class User {
     @Column(name = "firstName", length = 60, nullable = false, unique = true)
     private String first_name;
 
-    @Column(name = "lastName", length = 60, nullable = false, unique = true)
+    @Column(name = "lasName", length = 60, nullable = false, unique = true)
     private String last_name;
 
     @Column(name = "userName", length = 60, nullable = false, unique = true)
@@ -30,25 +30,25 @@ public class User {
     @Column(name = "password", length = 60, nullable = false)
     private String password;
 
-     @Column ( name = "lastLogin")
+    @Column(name = "lastLogin")
     private LocalDateTime last_login;
 
-     @Column( name = "createdAt", updatable = false )
+    @Column(name = "createdAt", updatable = false)
     private LocalDateTime created_at;
 
-     @Column(name = " updateAt")
-     private LocalDateTime update_at;
+    @Column(name = " updateAt")
+    private LocalDateTime update_at;
 
-     @Column( name = "phone", length = 20)
+    @Column(name = "phone", length = 20)
     private String phone;
 
     @Column(name = "roleId")
-    private Integer roleId;
+    private Role role;
 
     public User() {
     }
 
-    public User(Long id, String first_name, String last_name, String user_name, String email, String password, LocalDateTime last_login, LocalDateTime created_at, LocalDateTime update_at, String phone, Integer roleId) {
+    public User(Long id, String first_name, String last_name, String user_name, String email, String password, LocalDateTime last_login, LocalDateTime created_at, LocalDateTime update_at, String phone, Role role) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -59,7 +59,7 @@ public class User {
         this.created_at = created_at;
         this.update_at = update_at;
         this.phone = phone;
-        this.roleId = roleId;
+        this.role = role;
     }
 
     public Long getId() {
@@ -142,12 +142,12 @@ public class User {
         this.phone = phone;
     }
 
-    public Integer getRoleId() {
-        return roleId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
@@ -163,7 +163,7 @@ public class User {
                 ", created_at=" + created_at +
                 ", update_at=" + update_at +
                 ", phone='" + phone + '\'' +
-                ", roleId=" + roleId +
+                ", role=" + role +
                 '}';
     }
 
@@ -171,13 +171,12 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
-        return Objects.equals(id, user.id) && Objects.equals(first_name, user.first_name) && Objects.equals(last_name, user.last_name) && Objects.equals(user_name, user.user_name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(last_login, user.last_login) && Objects.equals(created_at, user.created_at) && Objects.equals(update_at, user.update_at) && Objects.equals(phone, user.phone) && Objects.equals(roleId, user.roleId);
+        return Objects.equals(id, user.id) && Objects.equals(first_name, user.first_name) && Objects.equals(last_name, user.last_name) && Objects.equals(user_name, user.user_name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(last_login, user.last_login) && Objects.equals(created_at, user.created_at) && Objects.equals(update_at, user.update_at) && Objects.equals(phone, user.phone) && Objects.equals(role, user.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, first_name, last_name, user_name, email, password, last_login, created_at, update_at, phone, roleId);
+        return Objects.hash(id, first_name, last_name, user_name, email, password, last_login, created_at, update_at, phone, role);
     }
 }
-
 

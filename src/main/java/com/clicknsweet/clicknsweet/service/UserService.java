@@ -1,10 +1,14 @@
 package com.clicknsweet.clicknsweet.service;
 
 import com.clicknsweet.clicknsweet.model.User;
+import com.clicknsweet.clicknsweet.repository.RoleRepository;
 import com.clicknsweet.clicknsweet.repository.UserRepository;
 import com.clicknsweet.clicknsweet.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +61,7 @@ public class UserService {
                     existingUser.setEmail(user.getEmail());
                     existingUser.setPassword(user.getPassword());
                     existingUser.setPhone(user.getPhone());
-                    existingUser.setRoleId(user.getRoleId());
+                    existingUser.setRole(user.getRole());
                     return userRepository.save(existingUser);
                 })
                 .orElseThrow(() -> new UserNotFoundException("Cannot update. No user found with ID: " + id));

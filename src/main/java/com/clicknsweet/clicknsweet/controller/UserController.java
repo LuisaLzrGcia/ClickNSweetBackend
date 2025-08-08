@@ -2,7 +2,7 @@ package com.clicknsweet.clicknsweet.controller;
 
 import com.clicknsweet.clicknsweet.model.User;
 import com.clicknsweet.clicknsweet.service.UserService;
-import com.clicknsweet.clicknsweet.service.exception.UserNotFoundException;
+import com.clicknsweet.clicknsweet.exceptions.UserNotFoundException;
 
 
 

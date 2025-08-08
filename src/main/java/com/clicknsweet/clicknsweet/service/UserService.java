@@ -1,9 +1,8 @@
 package com.clicknsweet.clicknsweet.service;
 
 import com.clicknsweet.clicknsweet.model.User;
-import com.clicknsweet.clicknsweet.repository.RoleRepository;
 import com.clicknsweet.clicknsweet.repository.UserRepository;
-import com.clicknsweet.clicknsweet.service.exception.UserNotFoundException;
+import com.clicknsweet.clicknsweet.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

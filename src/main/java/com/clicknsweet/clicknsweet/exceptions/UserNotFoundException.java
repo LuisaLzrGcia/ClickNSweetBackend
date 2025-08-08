@@ -1,5 +1,5 @@
 
-package com.clicknsweet.clicknsweet.service.exception;
+package com.clicknsweet.clicknsweet.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

@@ -1,6 +1,7 @@
 package com.clicknsweet.clicknsweet.controller;
 
 
+import com.clicknsweet.clicknsweet.dto.OrderDTO;
 import com.clicknsweet.clicknsweet.exceptions.OrderNotFoundException;
 import com.clicknsweet.clicknsweet.model.Order;
 import com.clicknsweet.clicknsweet.service.OrderService;
@@ -32,12 +33,12 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody Order order) {
-        if (order.getOrderLines() == null || order.getOrderLines().isEmpty()) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderDTO orderDTO) {
+        if (orderDTO.getOrderLines() == null || orderDTO.getOrderLines().isEmpty()) {
             return ResponseEntity.badRequest().body("La orden debe tener al menos un producto.");
         }
 
-        Order creado = orderService.createOrder(order);
+        Order creado = orderService.createOrder(orderDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 

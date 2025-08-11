@@ -6,9 +6,6 @@ import com.clicknsweet.clicknsweet.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +31,8 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String userName) {
+        return userRepository.findByUserName(userName);
     }
 
     public User findById(Long id) {
@@ -47,7 +44,7 @@ public class UserService {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else {
-            throw new UserNotFoundException("Cannot delete. No user found with ID: " + id);
+            throw new UserNotFoundException("Cannot delete. No user found with id: " + id);
         }
     }
 
@@ -63,7 +60,7 @@ public class UserService {
                     existingUser.setRole(user.getRole());
                     return userRepository.save(existingUser);
                 })
-                .orElseThrow(() -> new UserNotFoundException("Cannot update. No user found with ID: " + id));
+                .orElseThrow(() -> new UserNotFoundException("Cannot update. No user found with id: " + id));
     }
 
     public List<User> findByFirstName(String firstName) {
@@ -79,7 +76,7 @@ public class UserService {
     }
 
     public List<User> findByRoleId(Integer roleId) {
-        return userRepository.findByRoleId(roleId);
+        return userRepository.findByRole_Id(roleId);
     }
 
     public User updateLastLogin(Long id) {
@@ -96,11 +93,11 @@ public class UserService {
     }
 
     public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return userRepository.existsByUserName(username);
     }
 
     public long countByRoleId(Integer roleId) {
-        return userRepository.countByRoleId(roleId);
+        return userRepository.countByRole_Id(roleId);
     }
 
     public List<User> findActiveUsers(int days) {

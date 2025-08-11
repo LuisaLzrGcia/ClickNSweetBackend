@@ -1,7 +1,10 @@
 package com.clicknsweet.clicknsweet.model;
 
 import jakarta.persistence.*;
+import jdk.dynalink.linker.LinkerServices;
+import org.hibernate.engine.internal.Cascade;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +25,6 @@ public class Category {
         this.name = name;
     }
 
-    //Getters y Setters
     public Integer getId() {
         return id;
     }
@@ -58,5 +60,14 @@ public class Category {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    // Relacion de Category con product 1:N
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    private List<Product> products; // mejor plural
+
+
+    public List<Product> getProducts() {
+        return products;
     }
 }

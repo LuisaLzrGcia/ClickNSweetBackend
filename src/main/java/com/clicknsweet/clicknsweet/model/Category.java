@@ -1,7 +1,10 @@
 package com.clicknsweet.clicknsweet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jdk.dynalink.linker.LinkerServices;
+import lombok.Setter;
 import org.hibernate.engine.internal.Cascade;
 
 import java.util.List;
@@ -11,14 +14,19 @@ import java.util.Objects;
 @Table(name = "categories")
 public class Category {
 
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Integer id;
 
 
+    @Setter
     @Column(name = "category_name", nullable = false, unique = true)
     private String name;
+
+    public Category() {
+    }
 
     public Category(Integer id, String name) {
         this.id = id;
@@ -29,16 +37,8 @@ public class Category {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     // To String
@@ -63,8 +63,10 @@ public class Category {
     }
 
     // Relacion de Category con product 1:N
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-    private List<Product> products; // mejor plural
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productCategoryId")
+    @JsonManagedReference
+    @JsonIgnore
+    private List<Product> products;
 
 
     public List<Product> getProducts() {

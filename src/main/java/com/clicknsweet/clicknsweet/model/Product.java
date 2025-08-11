@@ -304,4 +304,43 @@ public class Product {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", productName='" + productName + '\'' +
+                ", sku='" + sku + '\'' +
+                ", description='" + description + '\'' +
+                ", picture='" + picture + '\'' +
+                ", price=" + price +
+                ", salesFormatId=" + salesFormatId +
+                ", supplierCost=" + supplierCost +
+                ", quantityStock=" + quantityStock +
+                ", weight=" + weight +
+                ", length=" + length +
+                ", width=" + width +
+                ", height=" + height +
+                ", status=" + status +
+                ", lowStockThreshold=" + lowStockThreshold +
+                ", allowBackorders=" + allowBackorders +
+                ", averageRating=" + averageRating +
+                ", discountType='" + discountType + '\'' +
+                ", discountValue=" + discountValue +
+                ", categoryId=" + categoryId +
+                ", originCountryId=" + originCountryId +
+                ", originStateId=" + originStateId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
+    // Relacion de product a category N:1
+    @ManyToOne
+    @JoinColumn(name = "product_category_id") // columna FK en la tabla products
+    private Category category;
+
+    public Category getCategory(){
+        return category;
+    }
 }

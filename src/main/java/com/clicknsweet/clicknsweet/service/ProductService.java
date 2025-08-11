@@ -122,7 +122,7 @@ public class ProductService {
                     productItem.setDescription(product.getDescription());
                     productItem.setPicture(product.getPicture());
                     productItem.setPrice(product.getPrice());
-                    productItem.setSalesFormatId(product.getSalesFormatId());
+                    productItem.setProductSalesFormatId(product.getProductSalesFormatId());
                     productItem.setSupplierCost(product.getSupplierCost());
                     productItem.setQuantityStock(product.getQuantityStock());
                     productItem.setWeight(product.getWeight());
@@ -135,9 +135,9 @@ public class ProductService {
                     productItem.setAverageRating(product.getAverageRating());
                     productItem.setDiscountType(product.getDiscountType());
                     productItem.setDiscountValue(product.getDiscountValue());
-                    productItem.setCategoryId(product.getCategoryId());
-                    productItem.setOriginCountryId(product.getOriginCountryId());
-                    productItem.setOriginStateId(product.getOriginStateId());
+                    productItem.setProductCategoryId(product.getProductCategoryId());
+                    productItem.setProductCountryId(product.getProductCountryId());
+                    productItem.setProductStateId(product.getProductStateId());
 
                     return productRepository.save(productItem);
                 })

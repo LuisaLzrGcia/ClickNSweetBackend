@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 @Entity
-@Table(name = "Order_Lines")
+@Table(name = "order_lines")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orders_lines_id")
+    @Column(name = "order_lines_id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

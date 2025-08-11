@@ -11,13 +11,23 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmail(String email);
-    User findByUsername(String username);
+
+    User findByUserName(String userName);
+
     User findByPhone(String phone);
+
     List<User> findByFirstName(String firstName);
+
     List<User> findByFirstNameAndLastName(String firstName, String lastName);
-    List<User> findByRoleId(Integer roleId);
+
+    List<User> findByRole_Id(Integer roleId);
+
     List<User> findByLastLoginAfter(LocalDateTime date);
+
     boolean existsByEmail(String email);
-    boolean existsByUsername(String username);
-    long countByRoleId(Integer roleId);
+
+    boolean existsByUserName(String userName);
+
+    long countByRole_Id(Integer roleId);
+
 }

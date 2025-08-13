@@ -32,6 +32,11 @@ public class AddressService {
                 .orElseThrow(() -> new AddressNotFoundException(id));
     }
 
+    public List<Address> getAddressByUserId(Long userId) {
+        return addressRepository.findByUserId(userId);
+    }
+
+
     public void deleteAddress(Integer id) {
         if (addressRepository.existsById(id)) {
             addressRepository.deleteById(id);

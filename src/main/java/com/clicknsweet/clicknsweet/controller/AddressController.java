@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/clicknsweet")
 public class AddressController {
@@ -40,6 +41,15 @@ public class AddressController {
         return ResponseEntity.created(URI.create("/api/v1/clicknsweet/address/" + created.getId()))
                 .body(created);
 
+    }
+
+    @GetMapping("/address/user/{userId}")
+    public ResponseEntity<List<Address>> getAddressesByUser(@PathVariable Long userId) {
+        List<Address> address = addressService.getAddressByUserId(userId);
+        if (address.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(address);
     }
 
     // Mapear updateAddress

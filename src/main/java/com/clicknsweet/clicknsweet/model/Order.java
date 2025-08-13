@@ -23,18 +23,12 @@ public class Order {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "User_ID", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @Column(name = "User_ID", nullable = false)
-//    private Integer userId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Shipping_Address_ID", nullable = false)
+    @JoinColumn(name = "shipping_address_id", nullable = false)
     private Address shippingAddress;
-
-//    @Column(name = "Shipping_Address_ID", nullable = false)
-//    private Integer shippingAddressId;
 
     @Column(name = "status", length = 50, nullable = false)
     private String status;
@@ -52,7 +46,7 @@ public class Order {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<OrderLine> orderLines;
 

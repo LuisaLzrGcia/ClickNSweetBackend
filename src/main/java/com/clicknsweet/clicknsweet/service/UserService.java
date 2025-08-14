@@ -134,11 +134,11 @@ public class UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No user found with ID: " + id)
                         );
-        if (updatedUser.getFirst_name() != null)
-            existingUser.setFirst_name(updatedUser.getFirst_name());
+        if (updatedUser.getFirstName() != null)
+            existingUser.setFirstName(updatedUser.getFirstName());
 
-        if (updatedUser.getLast_name() != null)
-            existingUser.setLast_name(updatedUser.getLast_name());
+        if (updatedUser.getLastName() != null)
+            existingUser.setLastName(updatedUser.getLastName());
 
         if (updatedUser.getEmail() != null)
             existingUser.setEmail(updatedUser.getEmail());

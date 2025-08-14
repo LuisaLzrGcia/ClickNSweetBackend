@@ -157,7 +157,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
-                ", role=" + role +
+                ", roleId=" + (role != null ? role.getId() : null) +
                 '}';
     }
 

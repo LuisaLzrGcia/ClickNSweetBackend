@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import com.clicknsweet.clicknsweet.model.Role;
 
 
-
-
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/clicknsweet")
@@ -49,11 +49,15 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        User userByEmail = userService.findByEmail(email);
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        User userByEmail = userService.findByEmail(email.toLowerCase().trim());
+
         if (userByEmail == null) {
-            return ResponseEntity.notFound().build();
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Usuario no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
+
         return ResponseEntity.ok(userByEmail);
     }
 
@@ -152,6 +156,26 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
+        User user = userService.findByEmail(email.toLowerCase().trim());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Usuario no encontrado"));
+        }
+
+        if (!user.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Contraseña incorrecta"));
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
     @PutMapping("/update-user/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userToUpdate) {
         try {

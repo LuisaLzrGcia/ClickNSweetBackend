@@ -1,6 +1,7 @@
 package com.clicknsweet.clicknsweet.controller;
 
 import com.clicknsweet.clicknsweet.model.User;
+import com.clicknsweet.clicknsweet.repository.RoleRepository;
 import com.clicknsweet.clicknsweet.service.UserService;
 import com.clicknsweet.clicknsweet.exceptions.UserNotFoundException;
 
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.clicknsweet.clicknsweet.model.Role;
+
 
 
 
@@ -21,6 +24,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     public UserController(UserService userService){
@@ -77,20 +83,75 @@ public class UserController {
 
     @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
-        User existingUserByEmail = userService.findByEmail(newUser.getEmail());
-        if (existingUserByEmail != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 - Email ya existe
-        }
+        try {
+            System.out.println("=== DEBUGGING CREATE USER ===");
+            System.out.println("Usuario completo recibido: " + newUser);
+            System.out.println("FirstName: '" + newUser.getFirstName() + "'");
+            System.out.println("LastName: '" + newUser.getLastName() + "'");
+            System.out.println("UserName: '" + newUser.getUserName() + "'");
+            System.out.println("Email: '" + newUser.getEmail() + "'");
+            System.out.println("Password: '" + newUser.getPassword() + "'");
+            System.out.println("Phone: '" + newUser.getPhone() + "'");
+            System.out.println("Role: " + newUser.getRole());
 
-        User existingUserByUsername = userService.findByUsername(newUser.getUser_name());
-        if (existingUserByUsername != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 - Username ya existe
-        }
+            // Verificar si algún campo obligatorio es null
+            if (newUser.getFirstName() == null) {
+                System.out.println("ERROR: firstName es null!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
 
-        User createdUser = userService.createUser(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser); // 201
+            if (newUser.getLastName() == null) {
+                System.out.println("ERROR: lastName es null!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+
+            if (newUser.getUserName() == null) {
+                System.out.println("ERROR: userName es null!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+
+            // Resto de validaciones...
+            User existingUserByEmail = userService.findByEmail(newUser.getEmail());
+            if (existingUserByEmail != null) {
+                System.out.println("Email ya existe");
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+
+            User existingUserByUsername = userService.findByUsername(newUser.getUserName());
+            if (existingUserByUsername != null) {
+                System.out.println("Username ya existe");
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+
+            // Manejar el rol
+            if (newUser.getRole() == null) {
+                System.out.println("Creando rol por defecto...");
+                Role defaultRole = new Role();
+                defaultRole.setId(1);
+                defaultRole.setType("USER");
+                roleRepository.save(defaultRole);
+                newUser.setRole(defaultRole);
+            } else {
+                Role role = userService.findRoleById(newUser.getRole().getId());
+                if (role == null) {
+                    System.out.println("Rol no encontrado!");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+                newUser.setRole(role);
+            }
+
+            System.out.println("Antes de guardar - Usuario: " + newUser);
+            User createdUser = userService.createUser(newUser);
+            System.out.println("Usuario creado exitosamente!");
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+
+        } catch (Exception e) {
+            System.err.println("ERROR COMPLETO:");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
     @PutMapping("/update-user/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userToUpdate) {
         try {

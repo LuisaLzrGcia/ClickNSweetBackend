@@ -20,7 +20,7 @@ public class User {
     @Column(name = "first_name", length = 60, nullable = false, unique = true)
     private String firstName;
 
-    @Column(name = "las_name", length = 60, nullable = false, unique = true)
+    @Column(name = "last_name", length = 60, nullable = false, unique = true)
     private String lastName;
 
     @Column(name = "user_name", length = 60, nullable = false, unique = true)
@@ -38,18 +38,18 @@ public class User {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = " updateAt")
+    @Column(name = "updateAt")
     private LocalDateTime update_at;
 
     @Column(name = "phone", length = 20)
     private String phone;
 
     @ManyToOne
-    @JoinColumn(name = "roleId", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL)
-    private List<Address> adress;
+    private List<Address> adres;
 
    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     //private List<Order> orders;
@@ -82,29 +82,14 @@ public class User {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return firstName;
-    }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
 
-    public void setFirst_name(String first_name) {
-        this.firstName = first_name;
-    }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getLast_name() {
-        return lastName;
-    }
-
-    public void setLast_name(String last_name) {
-        this.lastName = last_name;
-    }
-
-    public String getUser_name() {
-        return userName;
-    }
-
-    public void setUser_name(String user_name) {
-        this.userName = user_name;
-    }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
 
     public String getEmail() {
         return email;
@@ -166,14 +151,11 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", first_name='" + firstName + '\'' +
-                ", last_name='" + lastName + '\'' +
-                ", user_name='" + userName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", last_login=" + lastLogin +
-                ", created_at=" + createdAt +
-                ", update_at=" + update_at +
                 ", phone='" + phone + '\'' +
                 ", role=" + role +
                 '}';

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 @Entity
 @Table (name = "products")
@@ -28,6 +29,12 @@ public class Product {
     @Column(name = "sku", length = 100, unique = true)
     private String sku;
 
+    @Lob
+    @Setter
+    @Getter
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
     @Setter
     @Getter
     @Column(name = "description", columnDefinition = "TEXT")
@@ -40,7 +47,7 @@ public class Product {
 
     @Setter
     @Getter
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
     @Setter
@@ -136,16 +143,16 @@ public class Product {
     @Getter
     @ManyToOne
     @JoinColumn(name = "product_category_id")
-    @JsonBackReference
     private Category productCategoryId;
 
     public Product() {
     }
 
-    public Product(Long id, String productName, String sku, String description, String picture, BigDecimal price, SalesFormat productSalesFormatId, BigDecimal supplierCost, Integer quantityStock, BigDecimal weight, BigDecimal length, BigDecimal width, BigDecimal height, Boolean status, Integer lowStockThreshold, Boolean allowBackorders, BigDecimal averageRating, String discountType, BigDecimal discountValue, Country productCountryId, State productStateId, Category productCategoryId) {
+    public Product(Long id, String productName, String sku, byte[] image, String description, String picture, BigDecimal price, SalesFormat productSalesFormatId, BigDecimal supplierCost, Integer quantityStock, BigDecimal weight, BigDecimal length, BigDecimal width, BigDecimal height, Boolean status, Integer lowStockThreshold, Boolean allowBackorders, BigDecimal averageRating, String discountType, BigDecimal discountValue, Country productCountryId, State productStateId, Category productCategoryId) {
         this.id = id;
         this.productName = productName;
         this.sku = sku;
+        this.image = image;
         this.description = description;
         this.picture = picture;
         this.price = price;
@@ -173,6 +180,7 @@ public class Product {
                 "id=" + id +
                 ", productName='" + productName + '\'' +
                 ", sku='" + sku + '\'' +
+                ", image=" + Arrays.toString(image) +
                 ", description='" + description + '\'' +
                 ", picture='" + picture + '\'' +
                 ", price=" + price +
@@ -196,5 +204,4 @@ public class Product {
                 ", productCategoryId=" + productCategoryId +
                 '}';
     }
-
 }

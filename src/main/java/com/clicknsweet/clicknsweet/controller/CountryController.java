@@ -1,33 +1,33 @@
 package com.clicknsweet.clicknsweet.controller;
 
 import com.clicknsweet.clicknsweet.model.Country;
-import com.clicknsweet.clicknsweet.repository.CountryRepository;
+import com.clicknsweet.clicknsweet.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/clicknsweet/countries")
 public class CountryController {
 
     @Autowired
-    private CountryRepository countryRepository;
+    private CountryService countryService;
 
-    // Obtener todos los países
+    // Obtener todos los países con sus estados
     @GetMapping
     public List<Country> getAllCountries() {
-        return countryRepository.findAll();
+        return countryService.getAllCountriesWithStates();
     }
 
-    // Obtener país por id
+    // Obtener país por id con estados
     @GetMapping("/{id}")
     public ResponseEntity<Country> getCountryById(@PathVariable Integer id) {
-        Optional<Country> country = countryRepository.findById(id);
-        if (country.isPresent()) {
-            return ResponseEntity.ok(country.get());
+        Country country = countryService.getCountryByIdWithStates(id);
+        if (country != null) {
+            return ResponseEntity.ok(country);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -35,22 +35,21 @@ public class CountryController {
 
     // Crear nuevo país
     @PostMapping
-    public Country createCountry(@RequestBody Country country) {
-        return countryRepository.save(country);
+    public boolean createCountry(@RequestBody Country country) {
+        // Se puede implementar en el servicio si quieres validaciones
+        return countryService.getAllCountriesWithStates().add(country); // Opcional
     }
 
     // Actualizar país
     @PutMapping("/{id}")
     public ResponseEntity<Country> updateCountry(@PathVariable Integer id, @RequestBody Country countryDetails) {
-        Optional<Country> countryOptional = countryRepository.findById(id);
-        if (!countryOptional.isPresent()) {
+        Country country = countryService.getCountryByIdWithStates(id);
+        if (country == null) {
             return ResponseEntity.notFound().build();
         }
-        Country country = countryOptional.get();
         country.setName(countryDetails.getName());
         country.setLatitude(countryDetails.getLatitude());
         country.setLongitude(countryDetails.getLongitude());
-        countryRepository.save(country);
         return ResponseEntity.ok(country);
     }
 

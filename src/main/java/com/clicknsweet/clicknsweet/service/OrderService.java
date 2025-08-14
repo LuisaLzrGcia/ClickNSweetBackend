@@ -2,6 +2,7 @@ package com.clicknsweet.clicknsweet.service;
 
 import com.clicknsweet.clicknsweet.dto.OrderDTO;
 import com.clicknsweet.clicknsweet.dto.OrderLineDTO;
+import com.clicknsweet.clicknsweet.dto.OrderMapper;
 import com.clicknsweet.clicknsweet.exceptions.AddressNotFoundException;
 import com.clicknsweet.clicknsweet.exceptions.OrderNotFoundException;
 import com.clicknsweet.clicknsweet.exceptions.ProductNotFoundException;
@@ -11,12 +12,13 @@ import com.clicknsweet.clicknsweet.repository.OrderRepository;
 import com.clicknsweet.clicknsweet.repository.ProductRepository;
 import com.clicknsweet.clicknsweet.repository.UserRepository;
 import com.clicknsweet.clicknsweet.exceptions.UserNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -34,13 +36,16 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-    public Order createOrder(OrderDTO dto) {
-        User user = userRepository.findById(Long.valueOf(dto.getUserId()))
-                .orElseThrow(() -> new UserNotFoundException("No existe usuario con id "+ dto.getUserId()));
+    public OrderDTO createOrder(OrderDTO dto) {
+        // 1️⃣ Obtener usuario
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("No existe usuario con id " + dto.getUserId()));
 
+        // 2️⃣ Obtener dirección de envío
         Address address = addressRepository.findById(dto.getShippingAddressId())
                 .orElseThrow(() -> new AddressNotFoundException(dto.getShippingAddressId()));
 
+        // 3️⃣ Crear nueva orden
         Order order = new Order();
         order.setUser(user);
         order.setShippingAddress(address);
@@ -48,11 +53,13 @@ public class OrderService {
         order.setTrackingNumber(dto.getTrackingNumber());
         order.setShippingCarrier(dto.getShippingCarrier());
 
-        List<OrderLine> orderLine = new ArrayList<>();
+        List<OrderLine> orderLines = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
+        // 4️⃣ Procesar cada línea del pedido
         for (OrderLineDTO orderLineDTO : dto.getOrderLines()) {
-            Long productId = Long.parseLong(String.valueOf(orderLineDTO.getProductId()));
+            // Obtener producto desde ProductDTO
+            Long productId = orderLineDTO.getProduct().getId();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductNotFoundException(productId));
 
@@ -62,52 +69,91 @@ public class OrderService {
             line.setPrice(product.getPrice());
             line.setOrder(order);
 
-             total = total.add(product.getPrice().multiply(BigDecimal.valueOf(orderLineDTO.getQuantity())));
-            orderLine.add(line);
+            // Calcular total del pedido
+            total = total.add(product.getPrice().multiply(BigDecimal.valueOf(orderLineDTO.getQuantity())));
 
+            orderLines.add(line);
         }
-        order.setOrderLines(orderLine);
+
+        // 5️⃣ Asignar líneas y total a la orden
+        order.setOrderLines(orderLines);
         order.setTotalAmount(total);
-        return orderRepository.save(order);
+
+        // 6️⃣ Guardar orden en la base de datos
+        Order savedOrder = orderRepository.save(order);
+
+        // 7️⃣ Retornar DTO con ProductDTO completo
+        return OrderMapper.toDTO(savedOrder);
     }
 
 
 
-    public List<Order> readOrders(){
-    List<Order> orders = orderRepository.findAll();
-    return orders;
+
+    public List<OrderDTO> readOrders(){
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderMapper::toDTO)
+                .toList();
     }
 
-    public Order findById(Integer id){
-    return orderRepository.findById(id)
-            .orElseThrow(()-> new OrderNotFoundException(id));
+    public OrderDTO findById(Integer id){
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+        return OrderMapper.toDTO(order);
     }
 
-    public Order updateOrder(Integer id, Order order) {
+    public OrderDTO updateOrder(Integer id, OrderDTO dto) {
         return orderRepository.findById(id)
                 .map(existente -> {
-                    existente.setStatus(order.getStatus());
-                    existente.setTrackingNumber(order.getTrackingNumber());
-                    existente.setShippingCarrier(order.getShippingCarrier());
+                    List<OrderLine> nuevasLineas = dto.getOrderLines().stream()
+                            .map(orderLineDTO -> {
+                                OrderLine line = new OrderLine();
+                                line.setQuantity(orderLineDTO.getQuantity());
 
-                    order.getOrderLines().forEach(line -> line.setOrder(existente));
+                                // Obtener productId desde ProductDTO
+                                Long productId = orderLineDTO.getProduct().getId();
+                                Product product = productRepository.findById(productId)
+                                        .orElseThrow(() -> new ProductNotFoundException(productId));
 
-                    existente.setOrderLines(order.getOrderLines());
+                                line.setProduct(product);
+                                line.setPrice(product.getPrice());
+                                line.setOrder(existente);
+                                return line;
+                            })
+                            .collect(Collectors.toList());
 
+                    // Reemplazar líneas existentes
+                    existente.getOrderLines().clear();
+                    existente.getOrderLines().addAll(nuevasLineas);
+
+                    // Recalcular total
                     BigDecimal total = existente.getOrderLines().stream()
-                            .map(l -> l.getPrice().multiply(BigDecimal.valueOf(l.getQuantity())))
+                            .map(line -> line.getPrice().multiply(BigDecimal.valueOf(line.getQuantity())))
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
                     existente.setTotalAmount(total);
 
-                    return orderRepository.save(existente);
+                    // Actualizar datos de la orden
+                    existente.setStatus(dto.getStatus());
+                    existente.setTrackingNumber(dto.getTrackingNumber());
+                    existente.setShippingCarrier(dto.getShippingCarrier());
+
+                    Order updated = orderRepository.save(existente);
+                    return OrderMapper.toDTO(updated);
                 })
                 .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
 
-    public Order deleteOrder(Integer id) {
-        Order order = findById(id);
-        orderRepository.delete(order);
+
+    public OrderDTO deleteOrder(Integer id) {
+        OrderDTO order = findById(id);
+        orderRepository.deleteById(id);
         return order;
+    }
+    public List<OrderDTO> getOrdersByUserId(Integer userId) {
+        return orderRepository.findByUserId(userId)
+                .stream()
+                .map(OrderMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

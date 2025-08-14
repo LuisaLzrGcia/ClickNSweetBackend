@@ -30,10 +30,7 @@ public class Address {
     private String typeAddress;
 
     @ManyToOne
-
     @JoinColumn(name = "id_user", nullable = false)
-
- 
     private User user;
 
     // Constructor vacío
@@ -100,7 +97,12 @@ public class Address {
         this.typeAddress = typeAddress;
     }
 
-
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
     @Override
     public String toString() {
         return "Address{" +

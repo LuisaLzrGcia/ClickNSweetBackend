@@ -130,4 +130,23 @@ public class UserService {
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(days);
         return userRepository.findByLastLoginAfter(cutoffDate);
     }
+    public User patchUser(Long id, User updatedUser) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("No user found with ID: " + id)
+                        );
+        if (updatedUser.getFirst_name() != null)
+            existingUser.setFirst_name(updatedUser.getFirst_name());
+
+        if (updatedUser.getLast_name() != null)
+            existingUser.setLast_name(updatedUser.getLast_name());
+
+        if (updatedUser.getEmail() != null)
+            existingUser.setEmail(updatedUser.getEmail());
+
+        if (updatedUser.getPhone() != null)
+            existingUser.setPhone(updatedUser.getPhone());
+
+        return userRepository.save(existingUser);
+    }
+
 }

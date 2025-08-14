@@ -18,7 +18,7 @@ import com.clicknsweet.clicknsweet.model.Role;
 
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/clicknsweet")
 public class UserController {
@@ -170,6 +170,11 @@ public class UserController {
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build(); // 404
         }
+    }
+    @PatchMapping("/update-user/{id}")
+    public ResponseEntity<User> patchUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        User user = userService.patchUser(id, updatedUser);
+        return ResponseEntity.ok(user);
     }
 }
 

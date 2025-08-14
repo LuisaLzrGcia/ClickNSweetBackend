@@ -1,6 +1,7 @@
 package com.clicknsweet.clicknsweet.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,12 +24,9 @@ public class OrderLine {
     @JsonBackReference
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
-//    @Column(name = "Product_ID", nullable = false)
-//    private Integer productId;
 
     @Column(name = "Quantity", nullable = false)
     private Integer quantity;

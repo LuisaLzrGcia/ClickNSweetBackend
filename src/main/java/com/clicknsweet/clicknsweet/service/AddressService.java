@@ -32,6 +32,11 @@ public class AddressService {
                 .orElseThrow(() -> new AddressNotFoundException(id));
     }
 
+    public List<Address> getAddressByUserId(Long userId) {
+        return addressRepository.findByUserId(userId);
+    }
+
+
     public void deleteAddress(Integer id) {
         if (addressRepository.existsById(id)) {
             addressRepository.deleteById(id);
@@ -42,17 +47,18 @@ public class AddressService {
 
     // Métodoo para actualizar address
     public Address updateAddress(Address address, Integer id) {
-            return addressRepository.findById(id)
-                    .map(addressMap -> {
-                        addressMap.setAddress(address.getAddress());
-                        addressMap.setCity(address.getCity());
-                        addressMap.setRegion(address.getRegion());
-                        addressMap.setCountry(address.getCountry());
-                        addressMap.setTypeAddress(address.getTypeAddress());
-                        return addressRepository.save(addressMap);
-                    })
-                    .orElseThrow(() -> new AddressNotFoundException(id));
-        }
+        return addressRepository.findById(id)
+                .map(addressMap -> {
+                    addressMap.setAddress(address.getAddress());
+                    addressMap.setCity(address.getCity());
+                    addressMap.setRegion(address.getRegion());
+                    addressMap.setCountry(address.getCountry());
+                    addressMap.setTypeAddress(address.getTypeAddress());
+                    addressMap.setUser(address.getUser());
+                    return addressRepository.save(addressMap);
+                })
+                .orElseThrow(() -> new AddressNotFoundException(id));
+    }
 
 
 

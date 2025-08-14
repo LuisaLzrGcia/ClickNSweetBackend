@@ -18,4 +18,6 @@ public class OrderDTO {
     private String trackingNumber;
     private LocalDateTime createdAt;
     private List<OrderLineDTO> orderLines;
+    private AddressDTO shippingAddress;
+
 }

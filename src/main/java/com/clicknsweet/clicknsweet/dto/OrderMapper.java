@@ -28,6 +28,9 @@ public class OrderMapper {
         dto.setTrackingNumber(order.getTrackingNumber());
         dto.setCreatedAt(order.getCreatedAt());
 
+        // Direccion completa para el front
+        dto.setShippingAddress(toAddressDTO(order.getShippingAddress()));
+
         List<OrderLineDTO> orderLinesDTO = order.getOrderLines()
                 .stream()
                 .map(OrderMapper::toOrderLineDTO)
@@ -36,6 +39,19 @@ public class OrderMapper {
         dto.setOrderLines(orderLinesDTO);
         return dto;
     }
+
+    private static AddressDTO toAddressDTO(Address a) {
+        if (a == null) return null;
+        AddressDTO dto = new AddressDTO();
+        dto.setId(a.getId());
+        dto.setAddress(a.getAddress());
+        dto.setCity(a.getCity());
+        dto.setCountry(a.getCountry());
+        dto.setRegion(a.getRegion());
+        dto.setTypeAddress(a.getTypeAddress());
+        return dto;
+    }
+
     private static ProductDTO toProductDTO(Product product) {
         if (product == null) return null;
 
@@ -55,12 +71,16 @@ public class OrderMapper {
         dto.setProductId(orderLine.getProduct().getId());
         dto.setQuantity(orderLine.getQuantity());
         dto.setPrice(orderLine.getPrice());
-
         dto.setProduct(toProductDTO(orderLine.getProduct()));
         return dto;
     }
 
-    public static Order toEntity(OrderDTO dto, ProductRepository productRepository, UserRepository userRepository, AddressRepository addressRepository) {
+    public static Order toEntity(
+            OrderDTO dto,
+            ProductRepository productRepository,
+            UserRepository userRepository,
+            AddressRepository addressRepository
+    ) {
         if (dto == null) return null;
 
         User user = userRepository.findById(dto.getUserId())

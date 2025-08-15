@@ -8,6 +8,7 @@ public class ProductFilterRequest {
     private Double averageRating;
     private int page = 0;
     private int size = 10;
+    private Long categoryId;
 
     public String getName() {
         return name;
@@ -63,5 +64,13 @@ public class ProductFilterRequest {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

@@ -83,6 +83,14 @@ public class ProductService {
                 spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("averageRating"), filter.getAverageRating()));
             }
 
+            // Filtrar por categoría
+            if (filter.getCategoryId() != null) {
+                spec = spec.and((root, query, cb) -> {
+                    return cb.equal(root.join("productCategoryId").get("id"), filter.getCategoryId());
+                });
+            }
+
+
             Page<Product> pagedResult = productRepository.findAll(spec, paging);
 
             Map<String, Object> response = new HashMap<>();
@@ -138,6 +146,7 @@ public class ProductService {
                     productItem.setProductCategoryId(product.getProductCategoryId());
                     productItem.setProductCountryId(product.getProductCountryId());
                     productItem.setProductStateId(product.getProductStateId());
+                    productItem.setImage(product.getImage());
 
                     return productRepository.save(productItem);
                 })

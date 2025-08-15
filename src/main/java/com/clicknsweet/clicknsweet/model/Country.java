@@ -33,10 +33,11 @@ public class Country {
     @Column(name = "Longitude", precision = 11, scale = 8)
     private BigDecimal longitude;
 
-    @OneToMany
-    @JoinColumn(name = "Country_ID")  // FK en tabla states
+    @OneToMany(mappedBy = "country")
     @JsonManagedReference
-    @JsonIgnore
+    @OrderBy("name ASC")
     private List<State> states;
+
+
 
 }

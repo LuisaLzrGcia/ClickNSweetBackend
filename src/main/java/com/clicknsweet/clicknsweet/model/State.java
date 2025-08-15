@@ -22,8 +22,9 @@ public class State {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Country_ID", nullable = false)
-    @JsonBackReference  // indica que esta referencia se ignora en serialización para evitar ciclos
+    @JsonBackReference
     private Country country;
+
 
     // Getters y setters
 

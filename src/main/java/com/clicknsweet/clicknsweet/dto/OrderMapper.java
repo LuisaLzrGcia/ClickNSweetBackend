@@ -10,6 +10,7 @@ import com.clicknsweet.clicknsweet.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,14 @@ public class OrderMapper {
         ProductDTO dto = new ProductDTO();
         dto.setId(product.getId());
         dto.setName(product.getProductName());
-        dto.setImage(product.getPicture());
         dto.setPrice(product.getPrice());
+
+        // Convertir byte[] a Base64 String
+        if (product.getImage() != null) {
+            String base64Image = Base64.getEncoder().encodeToString(product.getImage());
+            dto.setImage(base64Image);
+        }
+
         return dto;
     }
 

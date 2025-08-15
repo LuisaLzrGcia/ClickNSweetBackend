@@ -57,7 +57,7 @@ public class OrderController {
     public ResponseEntity<List<OrderDTO>> getOrdersByUserId(@PathVariable Integer userId) {
         List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
         if (orders.isEmpty()) {
-            throw new OrderNotFoundException(userId);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(orders);
     }

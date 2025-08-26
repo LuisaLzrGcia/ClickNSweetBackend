@@ -15,6 +15,7 @@ public class CommentReview {
     @Column(name = "comment_review_id")
     private Integer id;
 
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     @JsonIgnore

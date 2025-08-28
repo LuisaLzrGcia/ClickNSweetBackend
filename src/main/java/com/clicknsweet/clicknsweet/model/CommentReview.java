@@ -1,5 +1,7 @@
 package com.clicknsweet.clicknsweet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,8 +15,10 @@ public class CommentReview {
     @Column(name = "comment_review_id")
     private Integer id;
 
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
+    @JsonIgnore
     private Product product;
 
     @ManyToOne(optional = false)

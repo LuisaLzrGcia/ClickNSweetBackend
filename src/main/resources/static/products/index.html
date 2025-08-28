@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Click N' Swet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../products/products.css" />
+  <link rel="stylesheet" href="../footer/style.css" />
+  <link rel="icon" href="../assets/logotipo-clicknsweet-2.png" type="image/png">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav id="navbar-container" class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm"></nav>
+  <!-- Contenido principal -->
+  <div class="container my-5">
+    <div class="row">
+      <!-- Sidebar Desktop -->
+      <div class="col-lg-3 d-none d-lg-block">
+        <div class="sidebar">
+          <div id="sidebar-categories">
+            <!-- Aqui se renderizan las categorías -->
+          </div>
+
+
+          <div id="sidebar-countries">
+            <!-- Aquio se renderizan los paises -->
+          </div>
+          <div id="sidebar-price">
+            <h5 class="filter-title">Precio</h5>
+            <label for="minPrice" class="form-label mb-1">Precio mínimo</label>
+            <input type="number" id="minPrice" class="form-control mb-2" placeholder="Ej. 100" min="0">
+
+            <label for="maxPrice" class="form-label mb-1">Precio máximo</label>
+            <input type="number" id="maxPrice" class="form-control mb-3" placeholder="Ej. 1000" min="0">
+
+            <button id="applyPriceFilter" class="btn w-100 btn-apply-filter">Aplicar</button>
+            <button id="applyPriceFilterClena" class="btn w-100 btn-apply-filter-clean">Limpiar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid mb-3 d-block d-lg-none" id="filter-bar-mobile">
+        <div class="row">
+
+          <div class="col-4">
+            <div class="dropdown" id="dropdownFilterCategories">
+              <button class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categoría
+              </button>
+              <ul class="dropdown-menu p-3" style="min-width: 220px;" id="categoryList">
+                <!-- Aquí se insertarán los checkboxes -->
+                <li>
+                  <button id="applyCategoryFilter" class="btn w-100 mt-2 btn-apply-filter">Aplicar filtro</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="dropdown">
+              <button id="dropdownButton" class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                País
+              </button>
+              <ul class="dropdown-menu p-2" style="min-width: 200px;" id="countryDropdownMenu">
+                <input type="text" id="countrySearch" class="form-control mb-2" placeholder="Buscar país...">
+                <!-- Aquí se generarán las opciones -->
+                <div id="countryOptions" style="max-height: 150px; overflow-y: auto;"></div>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="dropdown">
+              <button id="priceDropdownButton" class="btn dropdown-toggle w-100" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Precio
+              </button>
+              <div class="dropdown-menu p-3" style="min-width: 220px;">
+                <label for="minPrice" class="form-label mb-1">Precio mínimo</label>
+                <input type="number" id="minPrice" class="form-control mb-2" placeholder="Ej. 100" min="0">
+
+                <label for="maxPrice" class="form-label mb-1">Precio máximo</label>
+                <input type="number" id="maxPrice" class="form-control mb-3" placeholder="Ej. 1000" min="0">
+
+                <button id="applyPriceFilter" class="btn w-100  btn-apply-filter">Aplicar</button>
+                <button id="applyPriceFilterClean" class="btn w-100  btn-apply-filter-clean">Limpiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-1" id="remove-filters">
+          <div class="col-12 d-flex flex-wrap align-items-center gap-2">
+            <div id="appliedFiltersBadges" class="d-flex flex-wrap gap-2">
+              <!-- Aquí aparecerán los badges con filtros activos -->
+            </div>
+            <button id="clearFiltersBtn" class="" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-eraser-fill"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Productos -->
+      <div class="col-lg-9">
+        <div class="container-fluid">
+          <div class="row align-items-center mb-3" id="filter-bar">
+
+            <!-- Input de búsqueda -->
+            <div class="col-md me-md-3 mb-2 mb-md-0">
+              <input type="text" class="form-control" placeholder="Buscar...">
+            </div>
+
+
+
+            <!-- Botones de ordenamiento -->
+            <div class="col-12 col-md-auto">
+              <div class="btn-group w-100" role="group">
+                <button class="btn btn-dark" id="sort-popular">Populares</button>
+                <button class="btn btn-outline-secondary" id="sort-new">New</button>
+                <button class="btn btn-outline-secondary" id="sort-price-asc">Precio ↑</button>
+                <button class="btn btn-outline-secondary" id="sort-price-desc">Precio ↓</button>
+                <button class="btn btn-outline-secondary" id="sort-rating">Rating</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+
+
+
+        <div class="d-flex flex-wrap w-100" id="container-products">
+          <!-- Productos -->
+
+
+        </div>
+
+        <!-- Paginación -->
+        <nav id="pagination-container" aria-label="Page navigation example" class="mt-4 w-100">
+
+      </div>
+
+
+      </nav>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script type="module" src="../main.js"></script>
+  <script type="module" src="../products/main.js"></script>
+  <script type="module" src="../functions/addCart.js"></script>
+  <script type="module" src="../functions/viewDetails.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

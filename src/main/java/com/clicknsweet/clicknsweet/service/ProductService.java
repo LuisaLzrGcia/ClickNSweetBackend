@@ -45,21 +45,20 @@ public class ProductService {
     public Map<String, Object> getPaginatedProducts(ProductFilterRequest filter) {
         try {
             Pageable paging = PageRequest.of(filter.getPage(), filter.getSize(), Sort.by("id").ascending());
-
             Specification<Product> spec = Specification.unrestricted();
 
             // Filtrar por nombre
             if (filter.getName() != null && !filter.getName().isEmpty()) {
                 String namePattern = "%" + filter.getName().toLowerCase() + "%";
-                spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), namePattern));
+                spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("productName")), namePattern));
             }
 
-            // Filtrar por preico minimo
+            // Filtrar por precio mínimo
             if (filter.getMinPrice() != null) {
                 spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), filter.getMinPrice()));
             }
 
-            // Filtrar por precio maximo
+            // Filtrar por precio máximo
             if (filter.getMaxPrice() != null) {
                 spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), filter.getMaxPrice()));
             }
@@ -67,11 +66,8 @@ public class ProductService {
             // Filtrar por status
             if (filter.getStatus() != null && !filter.getStatus().isEmpty()) {
                 Boolean statusValue = null;
-                if ("ACTIVE".equalsIgnoreCase(filter.getStatus())) {
-                    statusValue = true;
-                } else if ("INACTIVE".equalsIgnoreCase(filter.getStatus())) {
-                    statusValue = false;
-                }
+                if ("ACTIVE".equalsIgnoreCase(filter.getStatus())) statusValue = true;
+                else if ("INACTIVE".equalsIgnoreCase(filter.getStatus())) statusValue = false;
 
                 if (statusValue != null) {
                     Boolean finalStatusValue = statusValue;
@@ -79,18 +75,38 @@ public class ProductService {
                 }
             }
 
+            // Filtrar por rating
             if (filter.getAverageRating() != null) {
                 spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("averageRating"), filter.getAverageRating()));
             }
 
-            // Filtrar por categoría
-            if (filter.getCategoryId() != null) {
-                spec = spec.and((root, query, cb) -> {
-                    return cb.equal(root.join("productCategoryId").get("id"), filter.getCategoryId());
-                });
+            // Filtrar por categoría (ID o nombre)
+            if (filter.getCategory() != null && !filter.getCategory().isEmpty()) {
+                try {
+                    Long categoryId = Long.parseLong(filter.getCategory());
+                    spec = spec.and((root, query, cb) ->
+                            cb.equal(root.join("productCategoryId").get("id"), categoryId));
+                } catch (NumberFormatException e) {
+                    String categoryPattern = "%" + filter.getCategory().toLowerCase() + "%";
+                    spec = spec.and((root, query, cb) ->
+                            cb.like(cb.lower(root.join("productCategoryId").get("name")), categoryPattern));
+                }
             }
 
+            // Filtrar por país (ID o nombre)
+            if (filter.getCountry() != null && !filter.getCountry().isEmpty()) {
+                try {
+                    Long countryId = Long.parseLong(filter.getCountry());
+                    spec = spec.and((root, query, cb) ->
+                            cb.equal(root.join("productCountryId").get("id"), countryId));
+                } catch (NumberFormatException e) {
+                    String countryPattern = "%" + filter.getCountry().toLowerCase() + "%";
+                    spec = spec.and((root, query, cb) ->
+                            cb.like(cb.lower(root.join("productCountryId").get("name")), countryPattern));
+                }
+            }
 
+            // Ejecutar consulta paginada
             Page<Product> pagedResult = productRepository.findAll(spec, paging);
 
             Map<String, Object> response = new HashMap<>();
@@ -103,14 +119,13 @@ public class ProductService {
             response.put("isLast", pagedResult.isLast());
 
             return response;
-        } catch (Exception e) {
-            // Imprimir en consola para debug
-            e.printStackTrace();
 
-            // Puedes lanzar una excepción personalizada o devolver un mapa con un error
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Error al obtener los productos paginados: " + e.getMessage());
         }
     }
+
 
     // Metodo para eliminar producto por id
     public void deleteById(Long id) {

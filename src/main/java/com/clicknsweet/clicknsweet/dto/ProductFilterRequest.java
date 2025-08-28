@@ -1,76 +1,37 @@
 package com.clicknsweet.clicknsweet.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ProductFilterRequest {
+    @Getter
+    @Setter
     private String name;
+    @Getter
+    @Setter
     private Double minPrice;
+    @Getter
+    @Setter
     private Double maxPrice;
+    @Getter
+    @Setter
     private String status;
+    @Getter
+    @Setter
     private Double averageRating;
+    @Getter
+    @Setter
     private int page = 0;
+    @Getter
+    @Setter
     private int size = 10;
-    private Long categoryId;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Getter
+    @Setter
+    private String category;
+    @Getter
+    @Setter
+    private String country;
 
-    public Double getMinPrice() {
-        return minPrice;
-    }
-
-    public void setMinPrice(Double minPrice) {
-        this.minPrice = minPrice;
-    }
-
-    public Double getMaxPrice() {
-        return maxPrice;
-    }
-
-    public void setMaxPrice(Double maxPrice) {
-        this.maxPrice = maxPrice;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
 }

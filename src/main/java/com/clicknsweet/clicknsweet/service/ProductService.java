@@ -41,72 +41,113 @@ public class ProductService {
         return productRepository.save(newProduct);
     }
 
-    // Mapear productos paginados y por filtros
+    // Mapear filtrar productos
     public Map<String, Object> getPaginatedProducts(ProductFilterRequest filter) {
         try {
-            Pageable paging = PageRequest.of(filter.getPage(), filter.getSize(), Sort.by("id").ascending());
+            // ---------------- Determinar dirección de orden ----------------
+            Sort.Direction direction;
+
+            if (filter.getOrderBy() != null) {
+                String orderBy = filter.getOrderBy().toLowerCase();
+
+                // Si el cliente envía sort explícito, lo usamos
+                if (filter.getSort() != null) {
+                    direction = "asc".equalsIgnoreCase(filter.getSort()) ? Sort.Direction.ASC : Sort.Direction.DESC;
+                } else {
+                    // Si no envía sort, definimos el default según el orderBy
+                    switch (orderBy) {
+                        case "popular":
+                        case "new":
+                        case "rating":
+                            direction = Sort.Direction.DESC;
+                            break;
+                        case "price":
+                            direction = Sort.Direction.ASC;
+                            break;
+                        default:
+                            direction = Sort.Direction.DESC;
+                            break;
+                    }
+                }
+            } else {
+                // Si no envía orderBy → default popular DESC
+                filter.setOrderBy("popular");
+                direction = Sort.Direction.DESC;
+            }
+
+            // ---------------- Determinar campo de orden ----------------
+            Sort sortOrder;
+            switch (filter.getOrderBy().toLowerCase()) {
+                case "popular":
+                    sortOrder = Sort.by(direction, "totalSold");
+                    break;
+                case "new":
+                    sortOrder = Sort.by(direction, "createdAt");
+                    break;
+                case "price":
+                    sortOrder = Sort.by(direction, "price");
+                    break;
+                case "rating":
+                    sortOrder = Sort.by(direction, "averageRating");
+                    break;
+                default:
+                    sortOrder = Sort.by(direction, "id");
+                    break;
+            }
+
+            Pageable paging = PageRequest.of(filter.getPage(), filter.getSize(), sortOrder);
+
+            // ---------------- Construir especificaciones de filtro ----------------
             Specification<Product> spec = Specification.unrestricted();
 
-            // Filtrar por nombre
             if (filter.getName() != null && !filter.getName().isEmpty()) {
                 String namePattern = "%" + filter.getName().toLowerCase() + "%";
                 spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("productName")), namePattern));
             }
 
-            // Filtrar por precio mínimo
             if (filter.getMinPrice() != null) {
                 spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), filter.getMinPrice()));
             }
 
-            // Filtrar por precio máximo
             if (filter.getMaxPrice() != null) {
                 spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), filter.getMaxPrice()));
             }
 
-            // Filtrar por status
             if (filter.getStatus() != null && !filter.getStatus().isEmpty()) {
                 Boolean statusValue = null;
                 if ("ACTIVE".equalsIgnoreCase(filter.getStatus())) statusValue = true;
                 else if ("INACTIVE".equalsIgnoreCase(filter.getStatus())) statusValue = false;
-
                 if (statusValue != null) {
                     Boolean finalStatusValue = statusValue;
                     spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), finalStatusValue));
                 }
             }
 
-            // Filtrar por rating
             if (filter.getAverageRating() != null) {
                 spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("averageRating"), filter.getAverageRating()));
             }
 
-            // Filtrar por categoría (ID o nombre)
             if (filter.getCategory() != null && !filter.getCategory().isEmpty()) {
                 try {
                     Long categoryId = Long.parseLong(filter.getCategory());
-                    spec = spec.and((root, query, cb) ->
-                            cb.equal(root.join("productCategoryId").get("id"), categoryId));
+                    spec = spec.and((root, query, cb) -> cb.equal(root.join("productCategoryId").get("id"), categoryId));
                 } catch (NumberFormatException e) {
                     String categoryPattern = "%" + filter.getCategory().toLowerCase() + "%";
-                    spec = spec.and((root, query, cb) ->
-                            cb.like(cb.lower(root.join("productCategoryId").get("name")), categoryPattern));
+                    spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.join("productCategoryId").get("name")), categoryPattern));
                 }
             }
 
-            // Filtrar por país (ID o nombre)
             if (filter.getCountry() != null && !filter.getCountry().isEmpty()) {
                 try {
                     Long countryId = Long.parseLong(filter.getCountry());
-                    spec = spec.and((root, query, cb) ->
-                            cb.equal(root.join("productCountryId").get("id"), countryId));
+                    spec = spec.and((root, query, cb) -> cb.equal(root.join("productCountryId").get("id"), countryId));
                 } catch (NumberFormatException e) {
                     String countryPattern = "%" + filter.getCountry().toLowerCase() + "%";
-                    spec = spec.and((root, query, cb) ->
-                            cb.like(cb.lower(root.join("productCountryId").get("name")), countryPattern));
+                    spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.join("productCountryId").get("name")), countryPattern));
                 }
             }
 
-            // Ejecutar consulta paginada
+            // ---------------- Ejecutar consulta ----------------
             Page<Product> pagedResult = productRepository.findAll(spec, paging);
 
             Map<String, Object> response = new HashMap<>();
@@ -125,7 +166,6 @@ public class ProductService {
             throw new RuntimeException("Error al obtener los productos paginados: " + e.getMessage());
         }
     }
-
 
     // Metodo para eliminar producto por id
     public void deleteById(Long id) {

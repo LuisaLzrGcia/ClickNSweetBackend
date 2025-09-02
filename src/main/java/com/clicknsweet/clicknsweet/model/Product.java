@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -144,6 +145,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "product_category_id")
     private Category productCategoryId;
+
+    @Getter
+    @Formula("(SELECT COALESCE(SUM(ol.quantity),0) FROM order_lines ol WHERE ol.product_id = product_id)")
+    private Long totalSold;
 
     public Product() {
     }

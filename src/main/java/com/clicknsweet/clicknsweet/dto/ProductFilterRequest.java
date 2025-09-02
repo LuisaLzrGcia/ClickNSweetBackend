@@ -34,4 +34,11 @@ public class ProductFilterRequest {
     @Setter
     private String country;
 
+
+    @Getter
+    @Setter
+    private String orderBy;
+    @Getter
+    @Setter
+    private String sort;
 }

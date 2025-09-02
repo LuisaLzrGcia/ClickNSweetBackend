@@ -17,7 +17,7 @@ public class CommentReview {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnore
+
     private Product product;
 
     @ManyToOne(optional = false)
